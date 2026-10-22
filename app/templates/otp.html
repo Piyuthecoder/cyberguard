@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Enter code{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Check your email</h1>
+  <p class="muted">We sent a 6-digit code to <b>{{ email }}</b>. It expires in {{ config.OTP_MINUTES }} minutes.</p>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="code">One-time code</label>
+    <input id="code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required autofocus>
+    <p><button type="submit">Verify</button></p>
+  </form>
+  <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="resend" value="1">
+    <button class="secondary small" type="submit">Send a new code</button></form>
+</div>
+{% endblock %}

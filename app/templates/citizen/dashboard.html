@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}My complaints{% endblock %}
+{% block content %}
+<div class="row"><h1>My complaints</h1><div class="fixed"><a class="btn" href="{{ url_for('citizen.new_complaint') }}">File a new complaint</a></div></div>
+<div class="card table-scroll">
+  <table>
+    <thead><tr><th>Reference</th><th>Title</th><th>Category</th><th>Status</th><th>Filed</th></tr></thead>
+    <tbody>
+    {% for c in complaints %}
+      <tr><td><a href="{{ url_for('citizen.complaint', cid=c.id) }}">{{ c.ref }}</a></td><td>{{ c.title }}</td>
+          <td>{{ label(c.category) }}</td><td><span class="badge">{{ c.status }}</span></td>
+          <td class="small">{{ c.created_at.strftime('%d %b %Y') }}</td></tr>
+    {% else %}<tr><td colspan="5" class="muted">You have not filed any complaints.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

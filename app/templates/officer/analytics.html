@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<h1>Analytics</h1>
+<div class="grid g4"><div class="stat"><b id="total-loss">—</b><span>Total reported loss</span></div></div>
+<div class="grid g2 mt">
+  <div class="card"><h2>Complaints, last 30 days</h2><div class="chart-box"><canvas id="c-daily" role="img" aria-label="Complaints per day for the last 30 days"></canvas></div></div>
+  <div class="card"><h2>Status</h2><div class="chart-box"><canvas id="c-status" role="img" aria-label="Complaints by status"></canvas></div></div>
+</div>
+<div class="card"><h2>By category</h2><div class="chart-box"><canvas id="c-cat" role="img" aria-label="Complaints by category"></canvas></div></div>
+<div class="card"><h2>Most-reported identifiers</h2>
+  <table><thead><tr><th>Type</th><th>Value</th><th>Complaints</th></tr></thead><tbody id="repeat-body"></tbody></table></div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}" defer></script>
+{% endblock %}

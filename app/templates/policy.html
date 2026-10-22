@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Privacy policy{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Privacy notice (v{{ config.POLICY_VERSION }})</h1>
+  <p class="muted">Under the Digital Personal Data Protection Act, 2023. This is a project template and must be reviewed by a legal expert before production use.</p>
+  <h2>What we collect and why</h2>
+  <ul>
+    <li><b>Account data</b> (name, email, optional phone): to identify you and send one-time passcodes.</li>
+    <li><b>Complaint data</b> (narrative, suspect identifiers such as UPI IDs and phone numbers, uploaded evidence): to register and investigate your complaint.</li>
+    <li><b>Audit records</b> (who did what, when, from which IP address): to protect the chain of custody of evidence.</li>
+  </ul>
+  <h2>Who can see it</h2>
+  <p>You, and investigating officers and administrators of this portal. Every officer view or download of evidence is logged.</p>
+  <h2>How long we keep it</h2>
+  <p>Complaint data is kept while the case is open and for {{ config.RETENTION_YEARS }} years after closure, then erased.</p>
+  <h2>Your rights</h2>
+  <ul>
+    <li>Access and download your data from <i>My data</i>.</li>
+    <li>Withdraw consent and request erasure. If a complaint is still under investigation, erasure is deferred until it closes, because the law allows data needed for investigation to be retained.</li>
+    <li>Erasure removes personal data and evidence files; the audit log keeps only non-personal fingerprints (hashes) as proof that evidence existed.</li>
+  </ul>
+</div>
+{% endblock %}

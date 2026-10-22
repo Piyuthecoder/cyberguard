@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Evidence certificate{% endblock %}
+{% block content %}
+<div class="card">
+  <p class="noprint"><button type="button" onclick="window.print()">Print / save as PDF</button></p>
+  <h1>Certificate of Electronic Record Integrity</h1>
+  <p class="muted">Under Section 63 of the Bharatiya Sakshya Adhiniyam, 2023 (corresponding to Section 65B of the Indian Evidence Act, 1872). Draft produced by CyberGuard; the declaration below must be signed by the person responsible for the system before use in proceedings.</p>
+  <table>
+    <tr><th>Complaint reference</th><td>{{ c.ref }}</td></tr>
+    <tr><th>File name</th><td>{{ ev.filename }}</td></tr>
+    <tr><th>Size</th><td>{{ ev.size }} bytes</td></tr>
+    <tr><th>SHA-256 at submission</th><td class="mono">{{ ev.sha256 }}</td></tr>
+    <tr><th>Received (UTC)</th><td>{{ ev.uploaded_at.strftime('%Y-%m-%d %H:%M:%S') }}</td></tr>
+    <tr><th>Hash re-computed now</th><td class="mono">{{ result.get('actual', 'unavailable') }}</td></tr>
+    <tr><th>Integrity result</th><td>{% if result.get('ok') %}<span class="badge ok">Unaltered since submission</span>{% else %}<span class="badge bad">NOT VERIFIED — {{ result.get('error') or 'hash mismatch' }}</span>{% endif %}</td></tr>
+    <tr><th>Certificate generated (UTC)</th><td>{{ now.strftime('%Y-%m-%d %H:%M:%S') }}</td></tr>
+  </table>
+  <h2>Method</h2>
+  <p>The record was fingerprinted with SHA-256 on receipt, encrypted and stored in a write-once object, and its fingerprint was anchored in a hash-chained audit log in which each entry commits to the previous one. The integrity result above compares the stored object with both the database and the audit-log anchor.</p>
+  <h2>Declaration</h2>
+  <p>I certify that the above information is true to the best of my knowledge, that the computer producing the record was in regular use and operating properly, and that the record is a true reproduction of the information supplied to it.</p>
+  <p>Name: ____________________ &nbsp; Designation: ____________________ &nbsp; Signature: ____________________ &nbsp; Date: __________</p>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}File a complaint{% endblock %}
+{% block content %}
+<h1>File a cybercrime complaint</h1>
+<p class="muted">If money was just lost, also call <b>1930</b> immediately so the transaction can be frozen.</p>
+<form method="post" enctype="multipart/form-data" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="client_hashes" value="{}">
+  <label for="category">What happened?</label>
+  <select id="category" name="category" required>
+    <option value="">Select a category…</option>
+    {% for key, (name, law) in categories.items() %}<option value="{{ key }}" {{ 'selected' if form.get('category') == key }}>{{ name }}</option>{% endfor %}
+  </select>
+  <label for="title">Short title</label>
+  <input id="title" name="title" maxlength="200" value="{{ form.get('title', '') }}" required>
+  <label for="description">Describe the incident</label>
+  <textarea id="description" name="description" required>{{ form.get('description', '') }}</textarea>
+  <div class="row">
+    <div><label for="incident_date">Date of incident</label><input id="incident_date" type="date" name="incident_date" value="{{ form.get('incident_date', '') }}"></div>
+    <div><label for="amount_lost">Amount lost (₹)</label><input id="amount_lost" type="number" min="0" step="0.01" name="amount_lost" value="{{ form.get('amount_lost', '') }}"></div>
+  </div>
+
+  <h2 class="mt">Suspect details</h2>
+  <p class="small muted">Add any UPI ID, phone number, bank account, email or website used by the fraudster. We use these to connect your complaint with others.</p>
+  <div id="id-rows"></div>
+  <button class="secondary small" type="button" id="add-id">+ Add another</button>
+  <template id="id-row-tpl">
+    <div class="id-row">
+      <select name="id_kind" aria-label="Identifier type">{% for k, n in kinds.items() %}<option value="{{ k }}">{{ n }}</option>{% endfor %}</select>
+      <input name="id_value" aria-label="Identifier value" placeholder="name@bank">
+      <button class="secondary small" type="button" data-remove-id aria-label="Remove">✕</button>
+    </div>
+  </template>
+
+  <h2 class="mt">Evidence</h2>
+  <p class="small muted">Screenshots, chat exports, bank statements, emails (PDF, images, txt, eml, zip …). Each file gets a SHA-256 fingerprint shown below, calculated in your browser before it leaves your device. Stored evidence cannot be edited or replaced.</p>
+  <input type="file" name="evidence" multiple data-hash-files aria-label="Evidence files">
+  <div data-hash-output></div>
+
+  <label class="check"><input type="checkbox" name="consent" value="1" required>
+    <span>I consent to this complaint, the suspect identifiers and my evidence being processed and shared with investigating officers (<a href="{{ url_for('main.policy') }}" target="_blank">privacy notice</a>). I confirm the information is true to the best of my knowledge.</span></label>
+  <button type="submit">Submit complaint</button>
+</form>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Administration</h1>
+<div class="grid g2">
+  <div class="card"><h2>Audit-log integrity</h2>
+    <p class="muted">{{ audit_total }} entries. Each entry's hash covers the previous one; editing or deleting any row breaks the chain.</p>
+    <form method="post" action="{{ url_for('admin.audit_verify') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit">Verify audit chain</button></form></div>
+  <div class="card"><h2>Retention policy</h2>
+    <p class="muted">Erase citizens whose complaints have all been closed for more than {{ config.RETENTION_YEARS }} years.</p>
+    <form method="post" action="{{ url_for('admin.purge') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="secondary" type="submit">Apply retention policy now</button></form></div>
+</div>
+
+<div class="card"><h2>Add officer / admin</h2>
+  <form method="post" action="{{ url_for('admin.create_officer') }}" class="row">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div><label for="n">Name</label><input id="n" name="name" required></div>
+    <div><label for="e">Email</label><input id="e" type="email" name="email" required></div>
+    <div><label for="p">Initial password</label><input id="p" type="password" name="password" autocomplete="new-password" required></div>
+    <div><label for="r">Role</label><select id="r" name="role"><option value="officer">Officer</option><option value="admin">Admin</option></select></div>
+    <div class="fixed"><button type="submit">Create</button></div>
+  </form></div>
+
+<div class="card table-scroll"><h2>Data erasure requests</h2>
+  <table><thead><tr><th>Requested</th><th>User</th><th>Status</th><th>Note</th><th></th></tr></thead><tbody>
+  {% for r in requests %}<tr><td class="small">{{ r.created_at.strftime('%d %b %Y') }}</td><td>{{ r.user.name }}<br><span class="small muted">{{ r.user.email }}</span></td>
+    <td><span class="badge">{{ r.status }}</span></td><td class="small">{{ r.note or '' }}</td>
+    <td>{% if r.status == 'Pending' %}<form method="post" action="{{ url_for('admin.process_erasure', rid=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="small" type="submit">Process</button></form>{% endif %}</td></tr>
+  {% else %}<tr><td colspan="5" class="muted">No requests.</td></tr>{% endfor %}</tbody></table></div>
+
+<div class="card table-scroll"><h2>Users</h2>
+  <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead><tbody>
+  {% for u in users %}<tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td><span class="badge">{{ u.role }}</span></td><td class="small">{{ u.created_at.strftime('%d %b %Y') }}</td></tr>{% endfor %}</tbody></table></div>
+
+<div class="card table-scroll"><h2>Recent audit entries</h2>
+  <table><thead><tr><th>#</th><th>Time (UTC)</th><th>Actor</th><th>Action</th><th>Target</th><th>Hash</th></tr></thead><tbody>
+  {% for a in audit %}<tr><td>{{ a.id }}</td><td class="small">{{ a.ts[:19] }}</td><td>{{ a.actor_id or '—' }}</td><td>{{ a.action }}</td>
+    <td class="small">{{ a.target_type or '' }} {{ a.target_id or '' }}</td><td class="mono small">{{ a.hash[:16] }}…</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

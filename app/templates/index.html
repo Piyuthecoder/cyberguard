@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Report cybercrime securely{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Report cybercrime. Keep your evidence provably untouched.</h1>
+  <p>File a complaint, attach screenshots, chats or statements, and get a cryptographic fingerprint for every file. Once stored, evidence cannot be edited or replaced, and every access is written to a tamper-evident log.</p>
+  <p><a class="btn" href="{{ url_for('auth.register') }}">File a complaint</a>
+     <a class="btn secondary" href="{{ url_for('auth.login') }}">Sign in</a></p>
+</section>
+<div class="grid g3">
+  <div class="card"><h3>Tamper-evident evidence</h3><p class="muted">Files are hashed with SHA-256 in your browser, encrypted on the server, stored write-once and re-verifiable at any time. A Section 63 BSA (earlier 65B IEA) certificate can be generated.</p></div>
+  <div class="card"><h3>Linked complaints</h3><p class="muted">If the same UPI ID, phone number or bank account appears in several complaints, investigators are shown the pattern automatically.</p></div>
+  <div class="card"><h3>Your data, your control</h3><p class="muted">Consent is recorded, you can download everything we hold about you, and you can withdraw consent and request erasure (DPDP Act 2023).</p></div>
+</div>
+<div class="card">
+  <h2>What can you report?</h2>
+  <div class="table-scroll"><table>
+    <thead><tr><th>Category</th><th>Indicative provisions</th></tr></thead>
+    <tbody>{% for key, (name, law) in categories.items() %}<tr><td>{{ name }}</td><td class="muted">{{ law }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">Provisions are indicative and help triage your complaint; the investigating officer decides the final sections.</p>
+</div>
+{% endblock %}

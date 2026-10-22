@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Linked clusters{% endblock %}
+{% block content %}
+<h1>Linked complaint clusters</h1>
+<p class="muted">Groups of complaints connected through shared UPI IDs, phone numbers, bank accounts, emails or domains. Largest groups first — likely organised or repeat offenders.</p>
+{% for g in groups %}
+<div class="card">
+  <div class="row"><h2>Cluster of {{ g.complaints|length }} complaints</h2>
+    <div class="fixed"><span class="badge bad">{{ g.victims }} victim{{ 's' if g.victims != 1 }}</span>
+      <span class="badge warn">₹{{ '{:,.0f}'.format(g.loss) }} reported loss</span></div></div>
+  <p><b>Shared identifiers:</b>
+    {% for kind, value in g.identifiers %}<span class="badge">{{ kinds.get(kind, kind) }}</span> <span class="mono">{{ value }}</span>&nbsp; {% endfor %}</p>
+  <div class="table-scroll"><table><thead><tr><th>Ref</th><th>Title</th><th>Category</th><th>Status</th></tr></thead><tbody>
+    {% for c in g.complaints %}<tr><td><a href="{{ url_for('officer.case', cid=c.id) }}">{{ c.ref }}</a></td><td>{{ c.title }}</td><td>{{ label(c.category) }}</td><td><span class="badge">{{ c.status }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+</div>
+{% else %}<div class="card muted">No linked complaints yet. Clusters appear when two complaints share an identifier.</div>{% endfor %}
+{% endblock %}

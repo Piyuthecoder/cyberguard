@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My data{% endblock %}
+{% block content %}
+<h1>My data and privacy</h1>
+<div class="grid g2">
+  <div class="card"><h2>Download your data</h2><p class="muted">A JSON file with your profile, consents, complaints and evidence fingerprints.</p>
+    <a class="btn" href="{{ url_for('citizen.export') }}">Download</a></div>
+  <div class="card"><h2>Withdraw consent and erase</h2>
+    <p class="muted">Withdraws all consents and asks the administrator to erase your personal data. Complaints still under investigation are retained until they close.</p>
+    <form method="post" action="{{ url_for('citizen.request_erasure') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="danger" type="submit">Request erasure</button></form></div>
+</div>
+<div class="card"><h2>Consent record</h2>
+  <table><thead><tr><th>Purpose</th><th>Policy</th><th>Given</th><th>Status</th></tr></thead><tbody>
+  {% for c in consents %}<tr><td>{{ c.purpose.replace('_', ' ') }}</td><td>v{{ c.policy_version }}</td>
+    <td class="small">{{ c.created_at.strftime('%d %b %Y %H:%M') }}</td>
+    <td>{% if c.granted %}<span class="badge ok">active</span>{% else %}<span class="badge warn">withdrawn</span>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+{% if requests %}<div class="card"><h2>Erasure requests</h2>
+  <table><thead><tr><th>Requested</th><th>Status</th><th>Note</th></tr></thead><tbody>
+  {% for r in requests %}<tr><td class="small">{{ r.created_at.strftime('%d %b %Y') }}</td><td><span class="badge">{{ r.status }}</span></td><td>{{ r.note or '' }}</td></tr>{% endfor %}
+  </tbody></table></div>{% endif %}
+{% endblock %}

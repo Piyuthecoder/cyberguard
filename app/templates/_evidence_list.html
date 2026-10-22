@@ -1,0 +1,21 @@
+<div class="table-scroll"><table>
+  <thead><tr><th>File</th><th>SHA-256 fingerprint</th><th>Stored</th><th>Integrity</th></tr></thead>
+  <tbody>
+  {% for e in c.evidence %}
+    <tr>
+      <td>{{ e.filename }}<br><span class="small muted">{{ (e.size / 1024) | round(1) }} KB</span></td>
+      <td class="mono small">{{ e.sha256 }}
+        {% if e.transit_verified is true %}<br><span class="badge ok">matched browser hash</span>
+        {% elif e.transit_verified is false %}<br><span class="badge bad">browser hash MISMATCH</span>{% endif %}</td>
+      <td class="small">{{ e.uploaded_at.strftime('%d %b %Y %H:%M') }} UTC</td>
+      <td>
+        {% if e.erased %}<span class="badge warn">erased</span>{% else %}
+        <button class="secondary small" type="button" data-verify="{{ url_for('citizen.verify', eid=e.id) }}">Verify</button>
+        <a class="btn secondary small" href="{{ url_for('citizen.certificate', eid=e.id) }}" target="_blank">Certificate</a>
+        <a class="btn secondary small" href="{{ url_for('citizen.download', eid=e.id) }}">Download</a>
+        <div class="verify-out" aria-live="polite"></div>{% endif %}
+      </td>
+    </tr>
+  {% else %}<tr><td colspan="4" class="muted">No evidence attached yet.</td></tr>{% endfor %}
+  </tbody>
+</table></div>

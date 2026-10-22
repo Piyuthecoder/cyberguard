@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ c.ref }}{% endblock %}
+{% block content %}
+<div class="row"><div><h1>{{ c.title }}</h1><p class="muted">{{ c.ref }} · {{ label(c.category) }} · filed {{ c.created_at.strftime('%d %b %Y') }}</p></div>
+  <div class="fixed"><span class="badge info">{{ c.status }}</span></div></div>
+<div class="grid g2">
+  <div class="card">
+    <h2>Your report</h2>
+    <p>{{ c.description }}</p>
+    <p class="small muted">Indicative provisions: {{ sections(c.category) }}</p>
+    {% if c.amount_lost and c.amount_lost > 0 %}<p>Amount lost: ₹{{ '{:,.2f}'.format(c.amount_lost) }}</p>{% endif %}
+  </div>
+  <div class="card">
+    <h2>Suspect details</h2>
+    {% for i in c.identifiers %}<p><span class="badge">{{ kinds.get(i.kind, i.kind) }}</span> <span class="mono">{{ i.value }}</span></p>
+    {% else %}<p class="muted">None provided.</p>{% endfor %}
+    <h3 class="mt">Progress</h3>
+    <ul class="timeline"><li>Status: <b>{{ c.status }}</b></li>
+      <li>{% if c.officer %}Assigned to an investigating officer{% else %}Awaiting assignment{% endif %}</li></ul>
+  </div>
+</div>
+<div class="card">
+  <h2>Evidence</h2>
+  {% include "_evidence_list.html" %}
+  {% if can_upload %}
+  <form method="post" action="{{ url_for('citizen.upload_evidence', cid=c.id) }}" enctype="multipart/form-data" class="mt">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="client_hashes" value="{}">
+    <label for="more">Add more evidence</label>
+    <input id="more" type="file" name="evidence" multiple data-hash-files>
+    <div data-hash-output></div>
+    <p><button type="submit">Upload securely</button></p>
+  </form>{% endif %}
+</div>
+{% endblock %}

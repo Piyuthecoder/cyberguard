@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cases{% endblock %}
+{% block content %}
+<h1>Case dashboard</h1>
+<div class="grid g4">
+  <div class="stat"><b>{{ stats.total }}</b><span>Total complaints</span></div>
+  <div class="stat"><b>{{ stats.open }}</b><span>Open</span></div>
+  <div class="stat"><b>{{ stats.unassigned }}</b><span>Unassigned</span></div>
+  <div class="stat"><b>{{ stats.linked }}</b><span>Linked to others</span></div>
+</div>
+<form method="get" class="card row mt">
+  <div><label for="view">View</label><select id="view" name="view">
+    {% for v, n in [('', 'All'), ('mine', 'Assigned to me'), ('unassigned', 'Unassigned'), ('linked', 'Linked to other complaints')] %}
+    <option value="{{ v }}" {{ 'selected' if args.get('view', '') == v }}>{{ n }}</option>{% endfor %}</select></div>
+  <div><label for="status">Status</label><select id="status" name="status"><option value="">Any</option>
+    {% for s in statuses %}<option {{ 'selected' if args.get('status') == s }}>{{ s }}</option>{% endfor %}</select></div>
+  <div><label for="category">Category</label><select id="category" name="category"><option value="">Any</option>
+    {% for k, (n, _) in categories.items() %}<option value="{{ k }}" {{ 'selected' if args.get('category') == k }}>{{ n }}</option>{% endfor %}</select></div>
+  <div class="fixed"><button type="submit">Filter</button></div>
+</form>
+<div class="card table-scroll"><table>
+  <thead><tr><th>Ref</th><th>Title</th><th>Category</th><th>Status</th><th>Officer</th><th>Links</th><th>Filed</th></tr></thead>
+  <tbody>
+  {% for c in complaints %}
+    <tr><td><a href="{{ url_for('officer.case', cid=c.id) }}">{{ c.ref }}</a></td><td>{{ c.title }}</td><td>{{ label(c.category) }}</td>
+      <td><span class="badge">{{ c.status }}</span></td><td>{{ c.officer.name if c.officer else '—' }}</td>
+      <td>{% if counts[c.id] %}<span class="badge bad">{{ counts[c.id] }} linked</span>{% else %}—{% endif %}</td>
+      <td class="small">{{ c.created_at.strftime('%d %b %Y') }}</td></tr>
+  {% else %}<tr><td colspan="7" class="muted">No complaints match.</td></tr>{% endfor %}
+  </tbody></table></div>
+{% endblock %}

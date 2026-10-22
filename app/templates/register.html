@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Create your account</h1>
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="name">Full name</label>
+    <input id="name" name="name" value="{{ form.get('name', '') }}" autocomplete="name" required>
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email" required>
+    <label for="phone">Mobile number <span class="muted">(optional)</span></label>
+    <input id="phone" name="phone" value="{{ form.get('phone', '') }}" autocomplete="tel">
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password" autocomplete="new-password" required>
+    <p class="small muted">At least 10 characters with letters and digits.</p>
+    <label for="confirm">Confirm password</label>
+    <input id="confirm" type="password" name="confirm" autocomplete="new-password" required>
+    <label class="check"><input type="checkbox" name="consent" value="1" required>
+      <span>I consent to CyberGuard processing my name, email and phone to run my account, as described in the <a href="{{ url_for('main.policy') }}" target="_blank">privacy notice</a>. I can withdraw this at any time.</span></label>
+    <button type="submit">Create account</button>
+  </form>
+  <p class="small muted">Already registered? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+</div>
+{% endblock %}
